@@ -9,6 +9,7 @@
         "utility": "cpp",
         "initializer_list": "cpp",
         "new": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "iostream": "cpp"
     }
 }
