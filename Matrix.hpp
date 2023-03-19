@@ -61,8 +61,8 @@ public:
             _vector[i] *= a;
     }
 
-    K& operator[](pair<size_t, size_t> p) { return _vector[p.first * _cols + p.second]; }
-    K operator[](pair<size_t, size_t> p) const { return _vector[p.first * _cols + p.second]; }
+    K& operator()(size_t i, size_t j) { return _vector[i * _cols + j]; }
+    K operator()(size_t i, size_t j) const { return _vector[i * _cols + j]; }
 
 };
 
