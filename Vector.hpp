@@ -11,62 +11,62 @@ template <typename K>
 class Vector
 {
 public:
-    vector<K> _vector;
+    vector<K> _data;
 
     Vector() {}
-    Vector(vector<K> const &vector) : _vector(vector) {}
-    Vector(Vector const &rhs) : _vector(rhs._vector) {}
+    Vector(vector<K> const &vector) : _data(vector) {}
+    Vector(Vector const &rhs) : _data(rhs._data) {}
     Vector &operator=(Vector const &rhs)
     {
-        _vector = rhs._vector;
+        _data = rhs._data;
         return *this;
     }
 
-    size_t  size() const { return _vector.size(); }
+    size_t  size() const { return _data.size(); }
 
     void    operator+=(Vector const &rhs)
     {
-        if (_vector.size() != rhs._vector.size())
+        if (_data.size() != rhs._data.size())
             throw exception();
 
-        for (size_t i = 0; i < rhs._vector.size(); i++)
-            _vector[i] += rhs._vector[i];
+        for (size_t i = 0; i < rhs._data.size(); i++)
+            _data[i] += rhs._data[i];
     }
 
     void    operator-=(Vector const &rhs)
     {
-        if (_vector.size() != rhs._vector.size())
+        if (_data.size() != rhs._data.size())
             throw exception();
 
-        for (size_t i = 0; i < rhs._vector.size(); i++)
-            _vector[i] -= rhs._vector[i];
+        for (size_t i = 0; i < rhs._data.size(); i++)
+            _data[i] -= rhs._data[i];
     }
 
     void    operator*=(K a)
     {
-        for (size_t i = 0; i < _vector.size(); i++)
-            _vector[i] *= a;
+        for (size_t i = 0; i < _data.size(); i++)
+            _data[i] *= a;
     }
 
-    K& operator[](size_t i) { return _vector[i]; }
-    K operator[](size_t i) const { return _vector[i]; }
+    K& operator[](size_t i) { return _data[i]; }
+    K operator[](size_t i) const { return _data[i]; }
 
     K   dot(Vector const &rhs) const
     {
-        if (_vector.size() != rhs._vector.size())
+        if (_data.size() != rhs._data.size())
             throw exception();
 
         K result = 0;
-        for (size_t i = 0; i < _vector.size(); i++)
-            result += _vector[i] * rhs._vector[i];
+        for (size_t i = 0; i < _data.size(); i++)
+            result += _data[i] * rhs._data[i];
         return result;
     }
 
     K   norm_1() const
     {
         K result = 0;
-        for (size_t i = 0; i < _vector.size(); i++)
-            result += abs(_vector[i]);
+        for (size_t i = 0; i < _data.size(); i++)
+            result += abs(_data[i]);
         return result;
     }
     K   norm() const
@@ -76,8 +76,8 @@ public:
     K   norm_inf() const
     {
         K result = 0;
-        for (size_t i = 0; i < _vector.size(); i++)
-            result = max(abs(_vector[i]), result);
+        for (size_t i = 0; i < _data.size(); i++)
+            result = max(abs(_data[i]), result);
         return result;
     }
 
