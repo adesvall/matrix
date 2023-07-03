@@ -62,7 +62,7 @@ public:
             _data[i] *= a;
     }
 
-    // K& operator()(size_t i, size_t j) { return _data[i * _cols + j]; }
+    K& operator()(size_t i, size_t j) { return _data[i * _cols + j]; }
     K operator()(size_t i, size_t j) const { return _data[i * _cols + j]; }
 
     Vector<K> mul_vec(Vector<K> vec) const
@@ -122,6 +122,68 @@ public:
         }
         return Matrix(data, _cols, _rows);
     }
+
+    void   swap_rows(size_t i1, size_t i2)
+    {
+        if (i1 >= _rows || i2 >= _rows)
+            throw exception();
+        if (i1 == i2)
+            return;
+
+        for (size_t k = 0; k < _cols; k++)
+            swap((*this)(i1, k), (*this)(i2, k));
+    }
+
+    Matrix row_echelon()    const
+    {
+        Matrix mat(*this);
+        size_t pivot_i = 0;
+        size_t pivot_j = 0;
+
+        while (pivot_i < mat._rows && pivot_j < mat._cols) {
+            size_t min_i = pivot_i;
+            for (size_t i = pivot_i + 1; i < mat._rows; i++) {
+                if ((abs(mat(i, pivot_j)) < abs(mat(min_i, pivot_j)) \
+                                            && mat(i, pivot_j) != 0) \
+                                            || mat(min_i, pivot_j) == 0)
+                    min_i = i;
+            }
+            if (mat(min_i, pivot_j) != 0)   {
+                mat.swap_rows(pivot_i, min_i);
+                K c = mat(pivot_i, pivot_j);
+                for (size_t j = pivot_j; j < mat._cols; j++)
+                    mat(pivot_i, j) /= c;
+            }
+            else {
+                pivot_j++;
+                continue;
+            }
+            for (size_t i = pivot_i + 1; i < mat._rows; i++) {
+                K c = mat(i, pivot_j) / mat(pivot_i, pivot_j);
+                for (size_t j = pivot_j; j < mat._cols; j++)
+                    mat(i, j) -= mat(pivot_i, j) * c;
+            }
+            pivot_i++;
+            pivot_j++;
+        }
+
+        // REDUCED ROW ECHELON FORM
+        for (size_t i = mat._rows - 1; i > 0; i--) {
+            for (size_t j = 0; j < mat._cols; j++) {
+                if (mat(i, j) != 0) {
+                    for (size_t k = i - 1; k < i; k--) {
+                        K c = mat(k, j) / mat(i, j);
+                        for (size_t l = j; l < mat._cols; l++)
+                            mat(k, l) -= mat(i, l) * c;
+                    }
+                    break;
+                }
+            }
+        }
+        return mat;
+    }
+
+    
 
 
 };
