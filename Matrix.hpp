@@ -183,6 +183,31 @@ public:
         return mat;
     }
 
+    Matrix sub_matrix(size_t i, size_t j) const
+    {
+        vector<K> data;
+
+        for (size_t k = 0; k < _rows; k++) {
+            for (size_t l = 0; l < _cols; l++) {
+                if (k != i && l != j)
+                    data.push_back((*this)(k, l));
+            }
+        }
+        return Matrix(data, _rows - 1, _cols - 1);
+    }
+
+    K determinant() const
+    {
+        K res = 0;
+
+        if (!isSquare())
+            throw exception();
+        for (size_t i = 0; i < _rows; i++) {
+            res += (*this)(0, i) * sub_matrix(0, i).determinant();
+        }
+        return res;
+    }
+
     
 
 
