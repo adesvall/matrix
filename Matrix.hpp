@@ -199,17 +199,84 @@ public:
     K determinant() const
     {
         K res = 0;
+        int sign = 1;
 
         if (!isSquare())
             throw exception();
+        if (_rows == 1)
+            return (*this)(0, 0);
         for (size_t i = 0; i < _rows; i++) {
-            res += (*this)(0, i) * sub_matrix(0, i).determinant();
+            res += sign * (*this)(0, i) * sub_matrix(0, i).determinant();
+            sign *= -1;
         }
         return res;
     }
 
-    
+    Matrix  inverse()   const
+    {
+        Matrix mat(*this);
+        Matrix res;
+        K det = mat.determinant();
 
+        if (!isSquare())
+            throw exception();
+        if (det == 0)
+            throw exception();
+        for (size_t i = 0; i < _rows; i++) {
+            for (size_t j = 0; j < _cols; j++) {
+                res._data.push_back(pow(-1, i + j) * mat.sub_matrix(i, j).determinant() / det);
+            }
+        }
+        res._rows = _rows;
+        res._cols = _cols;
+        return res.transpose();
+    }
+
+    size_t  rank() const
+    {
+        Matrix mat(*this);
+        size_t pivot_i = 0;
+        size_t pivot_j = 0;
+        size_t rank = 0;
+
+        while (pivot_i < mat._rows && pivot_j < mat._cols) {
+            size_t min_i = pivot_i;
+            for (size_t i = pivot_i + 1; i < mat._rows; i++) {
+                if ((abs(mat(i, pivot_j)) < abs(mat(min_i, pivot_j)) \
+                                            && mat(i, pivot_j) != 0) \
+                                            || mat(min_i, pivot_j) == 0)
+                    min_i = i;
+            }
+            if (mat(min_i, pivot_j) != 0)   {
+                mat.swap_rows(pivot_i, min_i);
+                K c = mat(pivot_i, pivot_j);
+                for (size_t j = pivot_j; j < mat._cols; j++)
+                    mat(pivot_i, j) /= c;
+            }
+            else {
+                pivot_j++;
+                continue;
+            }
+            for (size_t i = pivot_i + 1; i < mat._rows; i++) {
+                K c = mat(i, pivot_j) / mat(pivot_i, pivot_j);
+                for (size_t j = pivot_j; j < mat._cols; j++)
+                    mat(i, j) -= mat(pivot_i, j) * c;
+            }
+            pivot_i++;
+            pivot_j++;
+        }
+
+        for (size_t i = 0; i < mat._rows; i++) {
+            for (size_t j = 0; j < mat._cols; j++) {
+                if (mat(i, j) != 0) {
+                    rank++;
+                    break;
+                }
+            }
+        }
+        return rank;
+        
+    }
 
 };
 
